@@ -1,13 +1,12 @@
 <template>
   <div class="container">
-    <div class="item" v-for="(route, i) in routeMap">
-      <a
-        class="link"
-        :class="{
+    <div class="item"
+         v-for="(route, i) in routeMap" :key="route.id">
+      <a class="link"
+         :class="{
           'active-link': id === i
         }"
-        @click="linkTo(i)"
-      >
+         @click="linkTo(i)">
         <img :src="`/static/svgs/navigator/${route.path}.svg`">
       </a>
       <span class="description">{{ route[$store.state.lang] }}</span>
@@ -61,11 +60,11 @@ export default {
       width: 12px;
       height: 12px;
 
-      background: rgba(0,0,0,.7);
+      background: rgba(0, 0, 0, 0.7);
 
       transition: all 300ms ease;
       border-radius: 50%;
-      opacity: .1;
+      opacity: 0.1;
       cursor: pointer;
 
       display: flex;
@@ -87,12 +86,12 @@ export default {
       top: -6px;
       padding: 5px;
       padding-left: 10px;
-      
-      color: #FFF;
+
+      color: #fff;
       font-size: 14px;
       line-height: 14px;
       font-weight: bold;
-      background: rgba(0,0,0,.7);
+      background: rgba(0, 0, 0, 0.7);
       border-radius: 3px 0 0 3px;
 
       transform: translateX(50px);
@@ -110,13 +109,13 @@ export default {
         width: 0;
         height: 0;
 
-        border-left: 12px solid rgba(0,0,0,.7);
+        border-left: 12px solid rgba(0, 0, 0, 0.7);
         border-right: 12px solid transparent;
         border-top: 12px solid transparent;
         border-bottom: 12px solid transparent;
 
-        content: '';
-        display: block
+        content: "";
+        display: block;
       }
     }
 

@@ -123,7 +123,7 @@ const base = {
 
 const en = {
   title: `Jackie's resume`,
-  name: 'Jackie Tan',
+  name: 'Jacky Tan',
   shortDescription: 'Front-End Developer',
   description: ``,
   infomations: [

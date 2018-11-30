@@ -1,8 +1,8 @@
 @import '../../assets/less/animations.less';
 
 .index {
-  background: radial-gradient(ellipse farthest-corner, #0f2027, #2C5364);
-  background: linear-gradient(to left, rgb(142, 158, 171), rgb(238, 242, 243));
+  // background: radial-gradient(ellipse farthest-corner, #0f2027, #2C5364);
+  // background: linear-gradient(to left, rgb(142, 158, 171), rgb(238, 242, 243));
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -31,7 +31,7 @@
   .name {
     margin-top: 20px;
 
-    color: #444;
+    color: rgba(255, 255, 255, 0.9);
     font-size: 32px;
     line-height: 60px;
 
@@ -39,7 +39,7 @@
   }
 
   .shortDescription {
-    color: #777;
+    color: rgba(255, 255, 255, 0.5);
     line-height: 60px;
   }
 
@@ -63,7 +63,7 @@
     .wechat{
       .socialIcon(@color: rgba(0,0,0,.5); @activeColor: green; wechat)
     }
-    
+
   }
 
   .footer {
@@ -89,6 +89,20 @@
   }
 }
 
+.index:after{
+  content: '';
+  position: absolute;
+  z-index: -1;
+  width: 4000px;
+  height: 4000px;
+  transform-origin: center center;
+  left: -100%;
+  top:-50%;
+  background: linear-gradient(135deg, #00d2ff 0% , #3a7bd5 100%);
+  -webkit-animation: animate_bg 10s infinite linear;
+  animation: animate_bg 16s infinite linear;
+}
+
 /* social icons */
 .socialIcon(@color: #333; @activeColor: #4078c0; @animationName: draw) {
   position: relative;
@@ -96,7 +110,7 @@
   width: 70px;
   height: 70px;
   cursor: pointer;
-  
+
   .svgAndAnimations(@color; @activeColor; @animationName);
 
   .icon {
@@ -161,4 +175,16 @@
   100% {
     transform: translateY(5px)
   }
+}
+@keyframes animate_bg{
+	0%{
+    transform: rotate(0deg)
+
+	}
+	50%{
+    transform: rotate(180deg)
+	}
+	100%{
+    transform: rotate(360deg)
+	}
 }
