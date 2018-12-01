@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>spot</title>
+    <link rel="stylesheet" href="styles.css" />
+    <style>
+      .fill-width {
+        z-index: 1;
+        height: 100%;
+        width: 100%;
+      }
+
+      .canvas-container > canvas {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="container" class="fill-width"></div>
+    <h1 class="center"></h1>
+
+    <script src="./js/three.js" charset="utf-8"></script>
+
+    <script type="x-shader/x-vertex" id="vertexShader1">
+      attribute float size;
+      varying vec3 vColor;
+
+      void main() {
+      	vColor = color;
+      	vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+      	gl_PointSize = size * (300.0 / -mvPosition.z);
+      	gl_Position = projectionMatrix * mvPosition;
+      }
+    </script>
+    <script type="x-shader/x-fragment" id="fragmentShader1">
+      varying vec3 vColor;
+      float circle(in vec2 _st, in float _radius){
+          vec2 l = _st-vec2(0.5);
+          return 1.-smoothstep(_radius-(_radius*0.1),_radius+(_radius*0.1),dot(l,l)*4.0);
+      }
+
+      void main() {
+          float c = circle(gl_PointCoord, 0.8);
+      	vec4 color = vec4( vColor, c );
+      	gl_FragColor = color;
+      }
+    </script>
+    <script type="x-shader/x-vertex" id="vertexShader2">
+      varying vec2 vUv;
+
+      void main() {
+          vUv = uv;
+          vec3 pos = position;
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
+      }
+    </script>
+    <script type="x-shader/x-fragment" id="fragmentShader2">
+      uniform sampler2D u_texture;
+      varying vec2 vUv;
+
+      void main() {
+          vec3 tex = texture2D(u_texture, vUv).rgb;
+          float brightness = (tex.r + tex.g + tex.b) * 0.333;
+          gl_FragColor = vec4(tex, smoothstep(0.4, 0.5, brightness));
+      }
+    </script>
+
+    <script>
+      (function() {
+        'use strict';
+        var $container = document.getElementById('container');
+        // prettier-ignore
+        var renderer, scene, camera, pixelRatio = Math.min(window.devicePixelRatio, 2),
+	geometry1, material1, mesh1,
+	geometry2, material2, mesh2,
+	fov = 45, particleCount = 500, particleRadius = 100, particleSize = 6;
+
+        var mousePosition = {
+          x: 0.5,
+          y: 0.5
+        };
+        var v2MousePosition = new THREE.Vector2(
+          mousePosition.x,
+          mousePosition.y
+        );
+
+        var start = Date.now();
+        var fixedTime = 0,
+          timeOffset = 0,
+          dynamicTime = 0;
+
+        var w, h, isMobile;
+
+        var camX = 0;
+        var camY = 0;
+
+        var isFocused = true,
+          isInited = false;
+        window.addEventListener('blur', function() {
+          isFocused = false;
+        });
+        window.addEventListener('focus', function() {
+          isFocused = true;
+          if (isInited) {
+            render();
+          }
+        });
+
+        function updateSize() {
+          w = $container.offsetWidth;
+          h = $container.offsetHeight;
+          isMobile = w < 800;
+        }
+
+        var loadedAssetsCount = 0;
+        var requiredAssetsCount = 1;
+
+        function hasEverythingLoaded() {
+          if (loadedAssetsCount === requiredAssetsCount) {
+            init();
+          }
+        }
+
+        var textureLoader = new THREE.TextureLoader();
+
+        var imageTexture1Width, imageTexture1Height;
+        var imageTexture1 = textureLoader.load(
+          'pan.png',
+          function(texture) {
+            imageTexture1Width = texture.image.width;
+            imageTexture1Height = texture.image.height;
+            texture.generateMipmaps = false;
+            texture.wrapS = texture.wrapT = THREE.ClampToEdgeWrapping;
+            texture.minFilter = THREE.LinearFilter;
+
+            loadedAssetsCount++;
+            hasEverythingLoaded();
+          }
+        );
+
+        function init() {
+          updateSize();
+
+          scene = new THREE.Scene();
+
+          camera = new THREE.PerspectiveCamera(fov, w / h, 1, 500);
+          camera.position.z = isMobile ? 250 : 150;
+          if (isMobile) {
+            particleCount = 250;
+            particleRadius = 80;
+            particleSize = 20;
+          }
+
+          scene.add(camera);
+
+          material1 = new THREE.ShaderMaterial({
+            uniforms: [],
+            fragmentShader: document.querySelector('#fragmentShader1')
+              .textContent,
+            vertexShader: document.querySelector('#vertexShader1').textContent,
+            blending: THREE.AdditiveBlending,
+            depthTest: false,
+            transparent: true,
+            vertexColors: true
+          });
+          var geometry1Count = particleCount;
+          var geometry1Radius = particleRadius;
+          geometry1 = new THREE.BufferGeometry();
+          var geometry1Positions = [];
+          var geometry1Colors = [];
+          var geometry1Sizes = [];
+          var geometry1Color = new THREE.Color();
+          for (var i = 0; i < geometry1Count; i++) {
+            geometry1Positions.push((Math.random() * 2 - 1) * geometry1Radius);
+            geometry1Positions.push((Math.random() * 2 - 1) * geometry1Radius);
+            geometry1Positions.push((Math.random() * 2 - 1) * geometry1Radius);
+            geometry1Color.setHSL(i / geometry1Count, 1.0, 0.5);
+            geometry1Colors.push(
+              geometry1Color.r,
+              geometry1Color.g,
+              geometry1Color.b
+            );
+            geometry1Sizes.push(6);
+          }
+          geometry1.addAttribute(
+            'position',
+            new THREE.Float32BufferAttribute(geometry1Positions, 3)
+          );
+          geometry1.addAttribute(
+            'color',
+            new THREE.Float32BufferAttribute(geometry1Colors, 3)
+          );
+          geometry1.addAttribute(
+            'size',
+            new THREE.Float32BufferAttribute(geometry1Sizes, 1).setDynamic(true)
+          );
+          mesh1 = new THREE.Points(geometry1, material1);
+          scene.add(mesh1);
+
+          geometry2 = new THREE.PlaneGeometry(
+            imageTexture1Width * 0.08,
+            imageTexture1Height * 0.08,
+            1,
+            1
+          );
+          material2 = new THREE.ShaderMaterial({
+            uniforms: { u_texture: { type: 't', value: imageTexture1 } },
+            fragmentShader: document.querySelector('#fragmentShader2')
+              .textContent,
+            vertexShader: document.querySelector('#vertexShader2').textContent,
+            transparent: true
+          });
+          mesh2 = new THREE.Mesh(geometry2, material2);
+          mesh2.position.set(0, 0, -20);
+          mesh2.scale.multiplyScalar(1.4);
+          scene.add(mesh2);
+
+          renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+          renderer.setPixelRatio(pixelRatio);
+          renderer.setSize(w, h);
+          renderer.setClearColor(new THREE.Color('rgb(64,86,253)'));
+
+          $container.appendChild(renderer.domElement);
+
+          window.addEventListener('resize', handleResize);
+          if ('ontouchstart' in window) {
+            document.body.addEventListener('touchmove', handleTouchMove);
+          } else {
+            document.body.addEventListener('mousemove', handleMouseMove);
+          }
+
+          isInited = true;
+          render();
+        }
+
+        function handleResize() {
+          var wasMobile = isMobile;
+          updateSize();
+          renderer.setSize(w, h);
+          camera.aspect = w / h;
+
+          if (wasMobile !== isMobile) {
+            camera.position.z = isMobile ? 250 : 150;
+          }
+
+          camera.updateProjectionMatrix();
+          render();
+        }
+
+        function handleTouchMove(e) {
+          var touch = e.touches[0];
+          mousePosition.x = touch.pageX / w;
+          mousePosition.y = touch.pageY / h;
+        }
+
+        function handleMouseMove(e) {
+          mousePosition.x = e.pageX / w;
+          mousePosition.y = e.pageY / h;
+        }
+
+        function render(timestamp) {
+          if (isFocused) {
+            camX =
+              ((mousePosition.x - 0.5) * (isMobile ? 120 : 100) -
+                camera.position.x) *
+              0.05;
+            camY =
+              ((mousePosition.y - 0.5) * (isMobile ? 80 : 40) -
+                camera.position.y) *
+              0.05;
+
+            fixedTime = 0.0001 * (Date.now() - start);
+
+            var geometry1Sizes = geometry1.attributes.size.array;
+            for (var i = 0; i < particleCount; i++) {
+              geometry1Sizes[i] =
+                particleSize * (1 + Math.sin(0.1 * i + fixedTime * 10));
+            }
+            geometry1.attributes.size.needsUpdate = true;
+
+            camera.position.x += camX;
+            camera.position.y += camY;
+            camera.position.z += camY;
+            camera.lookAt(scene.position);
+
+            renderer.render(scene, camera);
+            requestAnimationFrame(render);
+          }
+        }
+      })();
+    </script>
+  </body>
+</html>

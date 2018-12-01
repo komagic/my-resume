@@ -32,7 +32,6 @@ Splitting();
   },
 
   updated() {
-    console.log('updated')
     Splitting();
   },
 }

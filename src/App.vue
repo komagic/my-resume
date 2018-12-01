@@ -3,7 +3,7 @@
     <navigator :id="currentPage" @linkTo="linkTo" />
     <language-switcher />
     <index
-      id="0"
+      id="0" @linkTo="linkTo"
       :class="{
         currentPage: currentPage === 0,
         prePage: currentPage > 0,

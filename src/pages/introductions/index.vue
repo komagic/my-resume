@@ -1,5 +1,5 @@
 <template>
-  <div class="page introductions">
+  <div id="introductions" class="page introductions">
     <h1 class="title">{{ $store.state.data.route[id] }}</h1>
     <div class="pagebody">
       <div class="selfIntroduction">

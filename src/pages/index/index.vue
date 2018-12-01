@@ -1,12 +1,16 @@
 <template>
   <div class="page index">
+    <iframe async
+            id="bgspot"
+            src="/static/index2.html"
+            frameborder="0"></iframe>
     <div class="avatar">
       <img src="/static/avatar.jpg">
     </div>
 
     <!-- <h1 class="name">{{ $store.state.data.website.name }}</h1> -->
 
-      <wordSplit :value='$store.state.data.website.name' />
+    <wordSplit :value='$store.state.data.website.name' />
 
     <p class="shortDescription">{{ $store.state.data.website.shortDescription }}</p>
     <div class="social">
@@ -20,9 +24,9 @@
                   cx="35"
                   r="30"></circle>
         </svg>
-        <a href="https://github.com/komagic"
-           target="_blank"
-           class="icon">
+        <a href="javascript:;"
+           @click="linkTo(2)"
+           class="icon" alt="project">
           <svg t="1484204795585"
                viewBox="0 0 1024 1024"
                version="1.1"
@@ -86,9 +90,12 @@
         </a>
       </div>
       <div class="footer">
-        <a href="https://github.com/komagic"
-           target="_blank">Star or fork this page at Github</a>
-        <span>↓</span>
+
+        <a id="abc"
+           href="javascript:;" @click="linkTo(1)"
+           style="color:#fff">↓</a>
+        <!-- <span>↓</span> -->
+
       </div>
     </div>
   </div>
@@ -98,7 +105,12 @@
 import wordSplit from '../../components/wordSplit'
 export default {
   name: 'index',
-  components: { wordSplit }
+  components: { wordSplit },
+  methods: {
+    linkTo (id) {
+      this.$emit('linkTo', id)
+    }
+  }
 }
 </script>
 

@@ -8,11 +8,18 @@
   justify-content: center;
   align-items: center;
 
+  #bgspot {
+    z-index: 0;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+  }
+
   .avatar {
     width: 150px;
     height: 150px;
     margin-top: -60px;
-
+    z-index: 2;
     border-radius: 50%;
     border: 5px solid #FFF;
     box-shadow: 0 5px 10px rgba(0,0,0,.1);
@@ -41,6 +48,7 @@
   .shortDescription {
     color: rgba(255, 255, 255, 0.5);
     line-height: 60px;
+    z-index: 2;
   }
 
   .social {
@@ -52,16 +60,16 @@
     align-items: center;
 
     .blog {
-      .socialIcon(@color: rgba(0,0,0,.5); @activeColor: #6ca397; blog)
+      .socialIcon(@color: rgba(255,255,255,.9); @activeColor: #6ca397; blog)
     }
     .github {
-      .socialIcon(@color: rgba(0,0,0,.5); @activeColor: #fa7d3c; github)
+      .socialIcon(@color: rgba(255,255,255,.9); @activeColor: #fa7d3c; github)
     }
     .music {
-      .socialIcon(@color: rgba(0,0,0,.5); @activeColor: #C20C0C; music)
+      .socialIcon(@color: rgba(255,255,255,.9); @activeColor: #C20C0C; music)
     }
     .wechat{
-      .socialIcon(@color: rgba(0,0,0,.5); @activeColor: green; wechat)
+      .socialIcon(@color: rgba(255,255,255,.9); @activeColor: green; wechat)
     }
 
   }
@@ -98,9 +106,8 @@
   transform-origin: center center;
   left: -100%;
   top:-50%;
-  background: linear-gradient(135deg, #00d2ff 0% , #3a7bd5 100%);
-  -webkit-animation: animate_bg 10s infinite linear;
-  animation: animate_bg 16s infinite linear;
+  background: rgb(64,86,253);
+
 }
 
 /* social icons */

@@ -12,7 +12,7 @@ export default [
   {
     path: 'designs',
     cn: '项目作品',
-    en: 'Designs'
+    en: 'Projects'
   },
   {
     path: 'skills',
