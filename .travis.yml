@@ -3,9 +3,3 @@ node_js:
   - "iojs"
   - "7"
 
-  Default Build Script:
-    npm test
-
-    before_install:
-      yarn
-

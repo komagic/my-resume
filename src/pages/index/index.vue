@@ -25,8 +25,8 @@
                   r="30"></circle>
         </svg>
         <a href="javascript:;"
-           @click="linkTo(2)"
-           class="icon" alt="project">
+           @click="linkTo(1)"
+           class="icon">
           <svg t="1484204795585"
                viewBox="0 0 1024 1024"
                version="1.1"
